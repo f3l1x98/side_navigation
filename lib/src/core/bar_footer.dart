@@ -39,43 +39,37 @@ class _SideNavigationBarFooterWidgetState
 
   /// Determines the footer widget based on [expandable] and [expanded]
   Widget _determineFooterWidget() {
-    if (widget.expandable) {
-      if (widget.expanded) {
-        return _FooterWidget(footerData: widget.footerData);
-      } else {
-        return Container();
-      }
-    } else {
-      if (widget.initiallyExpanded) {
-        return _FooterWidget(footerData: widget.footerData);
-      } else {
-        return Container();
-      }
-    }
+    return _FooterWidget(
+      footerData: widget.footerData,
+      expanded: widget.expandable ? widget.expanded : widget.initiallyExpanded,
+    );
   }
 }
 
 /// Internal Widget to just handle displaying data
-class _FooterWidget extends StatefulWidget {
+class _FooterWidget extends StatelessWidget {
   final SideNavigationBarFooter footerData;
-  const _FooterWidget({Key? key, required this.footerData}) : super(key: key);
+  final bool expanded;
+  const _FooterWidget(
+      {Key? key, required this.footerData, this.expanded = false})
+      : super(key: key);
 
-  @override
-  _FooterWidgetState createState() => _FooterWidgetState();
-}
-
-class _FooterWidgetState extends State<_FooterWidget> {
   @override
   Widget build(BuildContext context) {
+    if (!expanded && footerData.shrinkedLabel == null) return Container();
     return Align(
       alignment: Alignment.bottomCenter,
       child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(bottom: 8.0),
-            child: widget.footerData.label,
-          ),
-        ],
+        children: expanded
+            ? [
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 8.0),
+                  child: footerData.label,
+                ),
+              ]
+            : [
+                footerData.shrinkedLabel!,
+              ],
       ),
     );
   }
